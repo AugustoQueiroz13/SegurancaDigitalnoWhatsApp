@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prevenção do Golpe do PIX no WhatsApp - Projeto de Extensão Comunitária de Augusto Queiroz e UNICV</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F4F4F4;
+        }
+
+        .container-grafico {
+            position: relative;
+            width: 100%;
+            max-width: 400px;
+            height: 300px;
+            max-height: 350px;
+            margin: 20px auto;
+        }
+
+        .container-grafico-barra {
+            position: relative;
+            width: 100%;
+            height: 350px;
+            max-height: 400px;
+            margin: 20px auto;
+        }
+
+        .passo {
+            display: none;
+        }
+
+        .passo.active {
+            display: block;
+        }
+
+        .carregador {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #004AAD;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body class="text-gray-800">
+
+    <header class="bg-[#25D366] shadow-md sticky top-0 z-10">
+        <div class="container mx-auto max-w-6xl p-6 flex flex-col md:flex-row justify-between items-center">
+            <div class="flex items-center">
+                <span class="text-3xl mr-3">💬🔒</span>
+                <div>
+                    <h1 class="text-3xl font-bold text-white text-center">Capacitação em Segurança Digital no WhatsApp
+                    </h1>
+                    <p class="text-1g text-black text-center">Um guia educativo sobre o golpe do PIX | Projeto de
+                        Extensão Comunitária UNICV</p>
+                </div>
+            </div>
+            <div class="text-right mt-4 md:mt-0">
+                <div class="bg-white rounded-lg p-2 shadow-sm"><a href="https://unicv.edu.br/extensao-universitaria/"
+                        target="_blank" rel="noopener noreferrer">
+                        <img src="https://unicv.edu.br/wp-content/uploads/2020/12/logo-verde-280X100.png"
+                            alt="Logo UNICV" class="h-12 md:h-16 inline-block"
+                            onerror="this.alt='Logo UNICV'; this.src='https://placehold.co/200x60/FFFFFF/000000?text=UNICV';">
+                    </a>
+                </div>
+                <p class="text-sm text-black mt-2">Autor do Projeto: Augusto Queiroz</p>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto max-w-6xl p-4 md:p-8 mt-8">
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+
+            <!-- Coluna Principal -->
+            <div class="md:col-span-2 space-y-8">
+
+                <!-- Seção: O Problema -->
+                <section class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-2xl font-bold text-[#004AAD] mb-4">O Problema: O golpe no WhatsApp do "número novo"
+                    </h2>
+                    <p class="text-gray-700 mb-4">
+                        O golpe do "falso parente" (ou "número novo") é uma das fraudes mais comuns e eficazes no
+                        Brasil. Criminosos usam engenharia social para se passar por um filho, filha ou outro parente em
+                        apuros ou em situação emergenciais, solicitando transferências urgentes via PIX.
+                    </p>
+                    <p class="text-gray-700">
+                        A urgência e o apelo emocional são as principais armas do golpista. Eles contam com a confiança
+                        e o desejo da vítima de ajudar um ente querido, explorando a falta de verificação de segurança.
+                    </p>
+                </section>
+
+                <!-- Seção: Dados (Gráfico) -->
+                <section class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-2xl font-bold text-[#004AAD] mb-4">Dados da pesquisa: O alvo principal </h2>
+                    <p class="text-gray-700 mb-4">
+                        Embora qualquer pessoa possa cair, pesquisas indicam que o público 60+ é desproporcionalmente
+                        afetado. A menor familiaridade com a verificação em duas etapas e a maior confiança nas relações
+                        familiares são fatores explorados pelos criminosos.
+                    </p>
+                    <div class="container-grafico-barra">
+                        <canvas id="graficoVitimasGolpe"></canvas>
+                    </div>
+                    <p class="text-sm text-center text-gray-500 mt-2">Dados baseados na pesquisa feita e em tendências
+                        de segurança pública.</p>
+                </section>
+
+                <!-- Seção: Relatos -->
+                <section class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-2xl font-bold text-[#004AAD] mb-4">Relatos reais (anonimizados)</h2>
+                    <div class="space-y-4">
+                        <blockquote class="border-l-4 border-yellow-500 p-4 bg-yellow-50 rounded-r-lg">
+                            <p class="italic text-gray-700">"Meu maior medo era cair nesses golpes. Um dia, recebi uma
+                                mensagem do meu 'filho', com a foto dele, pedindo um PIX urgente. Fiquei nervoso, quase
+                                fiz. Minha sorte foi que minha neta estava do meu lado e me ensinou a ligar para o
+                                número antigo. Era golpe. Foi a partir desse susto que decidi que precisava aprender a
+                                me proteger."</p>
+                            <cite class="block text-right text-gray-600 mt-2">- J.C.R., 65 anos (Relato-base do
+                                projeto)</cite>
+                        </blockquote>
+                        <div class="space-y-4">
+                            <blockquote class="border-l-4 border-[#009FFD] p-4 bg-gray-50 rounded-r-lg">
+                                <p class="italic text-gray-700">"Recebi uma mensagem do 'meu filho' dizendo que tinha
+                                    trocado de número e precisava pagar um boleto urgente. A foto era dele. Só depois
+                                    que
+                                    fiz o PIX, liguei para o número antigo e descobri que era golpe. Perdi R$ 1.200."
+                                </p>
+                                <cite class="block text-right text-gray-600 mt-2">- M.A., 67 anos</cite>
+                            </blockquote>
+                            <blockquote class="border-l-4 border-[#009FFD] p-4 bg-gray-50 rounded-r-lg">
+                                <p class="italic text-gray-700">"Quase caí. A 'minha filha' pediu dinheiro para a
+                                    faculdade.
+                                    Desconfiei porque ela nunca pede assim. Liguei para ela no número de sempre e ela
+                                    atendeu, sem saber de nada. O golpista tinha pego a foto dela no perfil."</p>
+                                <cite class="block text-right text-gray-600 mt-2">- J.S., 62 anos</cite>
+                            </blockquote>
+                        </div>
+                </section>
+
+            </div>
+
+            <!-- Coluna Lateral -->
+            <div class="space-y-8">
+
+                <!-- Seção: Perfil da Vítima (Gráfico) -->
+                <section class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-2xl font-bold text-[#004AAD] mb-4">Fatores de risco</h2>
+                    <p class="text-gray-700 mb-4">
+                        O sucesso do golpe se baseia em uma combinação de fatores técnicos e psicológicos. Abaixo estão
+                        alguns fatores nos quais os golpistas se baiseiam para aumentar suas chances de sucesso:
+                    </p>
+                    <div class="container-grafico">
+                        <canvas id="graficoFatoresRisco"></canvas>
+                    </div>
+                </section>
+
+                <!-- Seção: Solução (Seu Projeto) -->
+                <section class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-2xl font-bold text-[#004AAD] mb-4">A solução: Capacitação focada</h2>
+                    <p class="text-gray-700 mb-4">
+                        Baseado no diagnóstico da problemática e em uma pesquisa na internet aprofundada sobre o tema, a
+                        solução mais eficaz é uma capacitação visual e direta,
+                        focada em criar uma "pausa para verificação".
+                    </p>
+                    <div class="border-2 border-[#004AAD] rounded-lg p-4 bg-blue-50">
+                        <h3 class="font-bold text-lg text-center text-[red]">PIX urgente? Calma!</h3>
+                        <p class="text-center text-black mt-2">É seu filho mesmo ou é o 'Golpe do número novo'?</p>
+                    </div>
+                </section>
+
+                <!-- INÍCIO DA SEÇÃO INFOGRÁFICO -->
+                <section class="bg-white rounded-lg shadow-md p-6">
+                    <h2 class="text-2xl font-bold text-[#004AAD] mb-4">Infográfico em imagem</h2>
+                    <p class="text-gray-700 mb-4">
+                        Este infográfico foi a primeira etapa da solução: um guia visual e objetivo com os 5 passos de
+                        segurança, ideal para compartilhar rapidamente com a comunidade.
+                    </p>
+                    <div>
+                        <img src="infografico-resumo.png" alt="Infográfico Resumo dos 5 Passos de Segurança"
+                            class="w-full rounded-lg shadow-md border"
+                            onerror="this.alt='Infográfico Resumo'; this.src='https://placehold.co/600x800/E0E0E0/000000?text=Infografico+Resumo';">
+                    </div>
+                </section>
+                <!-- FIM DA SEÇÃO INFOGRÁFICO -->
+
+
+            </div>
+
+        </div>
+
+        <!-- Seção: Guia de 5 Passos (Infográfico Principal) -->
+        <section class="md:col-span-3 bg-[#004AAD] rounded-lg shadow-md p-6 mt-8">
+            <h2 class="text-2xl font-bold text-center text-white mb-6">Como se proteger: O guia de 5 passos</h2>
+            <div id="guia-interativo" class="relative">
+
+                <div class="flex flex-col md:flex-row justify-between items-center p-4 rounded-lg bg-gray-100">
+                    <button id="passo-anterior"
+                        class="bg-[#004AAD] text-white font-bold py-2 px-6 rounded-lg shadow hover:bg-[#003B8A] transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed mb-2 md:mb-0">Anterior</button>
+                    <div id="titulo-passo" class="text-xl font-bold text-[#004AAD] text-center">Passo 1: O Alerta</div>
+                    <button id="proximo-passo"
+                        class="bg-[#004AAD] text-white font-bold py-2 px-6 rounded-lg shadow hover:bg-[#003B8A] transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed mt-2 md:mt-0">Próximo</button>
+                </div>
+
+                <div class="mt-6 p-6 border rounded-lg bg-gray-50 min-h-[300px]">
+
+                    <!-- Passo 1: Alerta -->
+                    <div id="passo-1" class="passo active space-y-4">
+                        <h3 class="text-3xl font-bold text-red-600 text-center">🚨 PASSO 1: O ALERTA</h3>
+                        <p class="text-lg text-center text-gray-700">"Oi pai/mãe, troquei de número. Salva aí."</p>
+                        <p class="text-gray-700 text-base">
+                            Toda mensagem de um número desconhecido, mesmo com a foto de um familiar, é um sinal de
+                            alerta. Golpistas pegam fotos de perfis públicos. A história é sempre parecida: o celular
+                            quebrou, foi roubado, ou está "só com WhatsApp".
+                        </p>
+                        <div class="text-center">
+                            <span class="text-6xl">⚠️</span>
+                        </div>
+                    </div>
+
+                    <!-- Passo 2: Pressão -->
+                    <div id="passo-2" class="passo space-y-4">
+                        <h3 class="text-3xl font-bold text-red-600 text-center">🏃‍♂️ PASSO 2: A PRESSÃO</h3>
+                        <p class="text-lg text-center text-gray-700">"Preciso pagar um boleto/conta AGORA. Me ajuda com
+                            um PIX? Te devolvo amanhã."</p>
+                        <p class="text-gray-700 text-base">
+                            O golpista NUNCA vai pedir para você ligar. Ele vai criar um senso de urgência extrema: o
+                            banco vai fechar, a conta vai vencer, ou está no meio de uma emergência. Eles querem que
+                            você aja por impulso, sem pensar.
+                        </p>
+                        <div class="text-center">
+                            <span class="text-6xl">⏰</span>
+                        </div>
+                    </div>
+
+                    <!-- Passo 3: Pausa -->
+                    <div id="passo-3" class="passo space-y-4">
+                        <h3 class="text-3xl font-bold text-yellow-600 text-center">⏸️ PASSO 3: A PAUSA</h3>
+                        <p class="text-lg text-center text-gray-700">"Calma. Deixa eu ver isso."</p>
+                        <p class="text-gray-700 text-base">
+                            Este é o passo mais importante. Respire fundo e NÃO FAÇA O PIX. Mesmo que a situação pareça
+                            desesperadora, um minuto de pausa não vai piorar uma emergência real, mas vai impedir um
+                            golpe. Desconfie de toda e qualquer urgência.
+                        </p>
+                        <div class="text-center">
+                            <span class="text-6xl">✋</span>
+                        </div>
+                    </div>
+
+                    <!-- Passo 4: Verificação -->
+                    <div id="passo-4" class="passo space-y-4">
+                        <h3 class="text-3xl font-bold text-blue-600 text-center">📞 PASSO 4: A VERIFICAÇÃO</h3>
+                        <p class="text-lg text-center text-gray-700">"Filho, estou te ligando no seu número antigo."</p>
+                        <p class="text-gray-700 text-base">
+                            Saia do WhatsApp. Pegue seu telefone e LIGUE (uma chamada de voz normal) para o número
+                            ANTIGO e CONHECIDO do seu familiar. Em 99% dos casos, ele vai atender e confirmar que não
+                            trocou de número.
+                        </p>
+                        <p class="text-gray-700 text-base font-semibold">
+                            Nunca confie apenas em mensagens. Se não conseguir ligar, faça uma pergunta que só o seu
+                            familiar saberia responder (ex: "Qual o nome do nosso primeiro cachorro?").
+                        </p>
+                        <div class="text-center">
+                            <span class="text-6xl">📞</span>
+                        </div>
+                    </div>
+
+                    <!-- Passo 5: Decisão -->
+                    <div id="passo-5" class="passo space-y-4">
+                        <h3 class="text-3xl font-bold text-green-600 text-center">✅ PASSO 5: A DECISÃO SEGURA</h3>
+                        <p class="text-lg text-center text-gray-700">"Não vou fazer o PIX. Isso é um golpe."</p>
+                        <p class="text-gray-700 text-base">
+                            Após a verificação, você terá a certeza. A decisão correta é: <strong>NÃO
+                                TRANSFERIR</strong>, bloquear o número do golpista imediatamente e avisar seus
+                            familiares sobre a tentativa de golpe. Você também pode tirar prints da tela onde o golpista
+                            de envia as mensagens e informações solicitando o PIX para reportar às autoridades, se
+                            necessário, abra um boletim de ocorrência na polícia.
+                        </p>
+                        <div class="text-center">
+                            <span class="text-6xl">🛡️</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NOVA SEÇÃO: ANALISADOR DE MENSAGEM COM IA -->
+        <section class="md:col-span-3 bg-white rounded-lg shadow-md p-6 mt-8">
+            <h2 class="text-2xl font-bold text-center text-[#004AAD] mb-6">Recebeu uma mensagem suspeita?</h2>
+            <p class="text-center text-gray-700 mb-6"><strong>Com o auxilio da IA
+                    (Gemini) o texto será analisado para te dizer o nível de risco de ser um golpe.<br><br> COLE A
+                    MENSAGEM RECEBIDA AQUI:</strong></p>
+
+            <div class="w-full max-w-2xl mx-auto">
+                <textarea id="campo-mensagem"
+                    class="w-full h-40 p-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#004AAD]"
+                    placeholder="Ex: Oi mãe, troquei de número. Meu celular quebrou, preciso pagar uma conta urgente. Me faz um PIX de R$ 850?"></textarea>
+
+                <button id="botao-analisar"
+                    class="w-full bg-[#004AAD] text-white font-bold py-3 px-6 rounded-lg shadow hover:bg-[#003B8A] transition duration-200 mt-4">
+                    Analisar Mensagem
+                </button>
+
+                <div id="carregador" class="carregador"></div>
+
+                <div id="resultado-analise" class="mt-6 p-4 border rounded-lg bg-gray-50 hidden">
+                    <h3 id="titulo-resultado" class="text-xl font-bold mb-2"></h3>
+                    <p id="explicacao-resultado" class="text-gray-700"></p>
+                </div>
+            </div>
+        </section>
+        <!-- FIM DA NOVA SEÇÃO -->
+
+        <!-- Seção: Prevenção e Projeto -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-8">
+
+            <section class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-bold text-[#004AAD] mb-4">Ações de prevenção e dicas de ouro:</h2>
+                <ul class="list-disc list-inside space-y-3 text-gray-700">
+                    <li>
+                        <strong>Ative a "Verificação em Duas Etapas"</strong> no seu WhatsApp. Isso impede que clonem
+                        sua conta. (Configurações > Conta > Verificação em duas etapas).
+                    </li>
+                    <li>
+                        <strong>Desconfie de Urgência:</strong> Golpistas sempre têm pressa. Bancos e familiares reais
+                        não costumam agir assim.
+                    </li>
+                    <li>
+                        <strong>LIGUE Sempre:</strong> A voz é a melhor verificação. Nunca faça PIX para um "parente"
+                        sem antes falar com ele por voz no número antigo.
+                    </li>
+                    <li>
+                        <strong>Ajuste sua Privacidade:</strong> No WhatsApp, mude quem pode ver sua foto de perfil para
+                        "Apenas Meus Contatos". (Configurações > Privacidade > Foto do Perfil).
+                    </li>
+                </ul>
+
+                <!-- INÍCIO DA ADIÇÃO: PLAYER DE PODCAST -->
+                <div class="mt-6 border-t pt-6">
+                    <h2 class="text-lg font-semibold text-[red] mb-3 text-center">Ouça o Podcast sobre este Projeto de
+                        Extensão:
+                    </h2>
+                    <audio controls class="w-full">
+                        <source
+                            src="/audio/Golpe do PIX no WhatsApp_ Engenharia Social, Prevenção Infalível (Ligue para o Número Antigo!).mp3"
+                            type="audio/mpeg">
+                        Seu navegador não suporta o elemento de áudio.
+                    </audio>
+                </div>
+                <!-- FIM DA ADIÇÃO -->
+
+            </section>
+
+            <section class="bg-white rounded-lg shadow-md p-6">
+                <h2 class="text-2xl font-bold text-[#004AAD] mb-4">Sobre este Projeto de Extensão</h2>
+                <div class="text-gray-700 space-y-4">
+                    <p>Este trabalho é parte de um projeto de extensão comunitária focado na capacitação em segurança
+                        digital,
+                        nascido de um diagnóstico com usuários vulneráveis.</p>
+                    <p><strong>Problemática:</strong> A carência de conhecimentos básicos em segurança digital tornam os
+                        usuários, principalmente idosos, vulneráveis a fraudes no WhatsApp, gerando insegurança e medo
+                        no uso de ferramentas
+                        essenciais de comunicação.</p>
+                    <p><strong>Solução:</strong> Uma capacitação focada e visual, que evoluiu de uma arte gráfica de um
+                        infográfico estático
+                        para uma página web interativa (protótipo funcional), sugerindo o aprendizado sequencial dos 5
+                        passos de segurança.</p>
+                    <div class="mt-6 border-t pt-4">
+                        <p class="font-bold">Auto do projeto, pesquisa, arte final, design e desenvolvimento web:
+                            Carlos Augusto
+                            Muniz de Queiroz</p>
+                        <p class="text-sm">Grad. em Análise e Desenvolvimento de Sistemas</p>
+                        <p class="font-bold mt-2">Parceria: UNICV - Centro Universitário Cidade Verde - Maringá/PR</p>
+                    </div>
+
+                    <!-- INÍCIO DA ADIÇÃO: BOTÃO DE DOWNLOAD -->
+                    <div class="mt-6 border-t pt-6">
+                        <a href="pesquisa-completa.pdf" download
+                            class="inline-block w-full text-center bg-[#004AAD] text-white font-bold py-3 px-6 rounded-lg shadow hover:bg-[#003B8A] transition duration-200">
+                            Baixar o Artigo com a Pesquisa Completa (PDF)
+                        </a>
+                    </div>
+                    <!-- FIM DA ADIÇÃO -->
+
+                </div>
+            </section>
+
+        </div>
+
+    </main>
+
+    <footer class="bg-[#242424] text-gray-400 p-8 mt-10">
+        <div class="container mx-auto max-w-6xl text-center">
+            <p>&copy; 2025 - Augusto Queiroz & UNICV - Projeto de Extensão Comunitária.<br>QUEIROZ, CARLOS AUGUSTO M.,
+                QUEIROZ, C. AUGUSTO M.</p>
+            <p class="text-sm mt-2">Este é um material educativo e não coleta dados pessoais. A análise de IA é anônima
+                e não armazena suas mensagens.</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const tooltipTitleCallback = (tooltipItems) => {
+                const item = tooltipItems[0];
+                let label = item.chart.data.labels[item.dataIndex];
+                if (Array.isArray(label)) {
+                    return label.join(' ');
+                } else {
+                    return label;
+                }
+            };
+
+            // Gráfico 1: Fatores de Risco (Pizza/Donut)
+            const riskCtx = document.getElementById('graficoFatoresRisco');
+            if (riskCtx) {
+                new Chart(riskCtx.getContext('2d'), {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Engenharia Social (Pressão)', 'Falta de Verificação', 'Vazamento de Dados (Foto)', 'Tecnologia (PIX Rápido)'],
+                        datasets: [{
+                            label: 'Fatores do Golpe',
+                            data: [40, 30, 20, 10],
+                            backgroundColor: [
+                                '#D9534F', // Vermelho (Pressão)
+                                '#F0AD4E', // Laranja (Falta de Verificação)
+                                '#009FFD', // Azul (Vazamento)
+                                '#5CB85C'  // Verde (Tecnologia)
+                            ],
+                            borderColor: '#FFFFFF',
+                            borderWidth: 2
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                            },
+                            title: {
+                                display: true,
+                                text: 'Principais fatores explorados'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    title: tooltipTitleCallback
+                                }
+                            }
+                        }
+                    }
+                });
+            } // Fim do if riskCtx
+
+            // Gráfico 2: Vítimas por Idade (Barras)
+            const victimsCtx = document.getElementById('graficoVitimasGolpe');
+            if (victimsCtx) {
+                new Chart(victimsCtx.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels: ['18-24', '25-34', '35-44', '45-54', '55-64', '65+'],
+                        datasets: [{
+                            label: 'Vítimas de Golpes Financeiros Online (%)',
+                            data: [12, 18, 20, 25, 35, 45], // Dados ilustrativos
+                            backgroundColor: '#004AAD',
+                            borderColor: '#003B8A',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y', // Gráfico de barras horizontais
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function (value) {
+                                        return value + '%'
+                                    }
+                                }
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                display: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'Incidência de Vítimas por Faixa Etária (Ilustrativo)'
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    title: tooltipTitleCallback,
+                                    label: function (context) {
+                                        return context.dataset.label + ': ' + context.raw + '%';
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            } // Fim do if victimsCtx
+
+            // Lógica do Guia Interativo
+            let currentStep = 1;
+            const totalSteps = 5;
+            const prevButton = document.getElementById('passo-anterior');
+            const nextButton = document.getElementById('proximo-passo');
+            const stepTitle = document.getElementById('titulo-passo');
+            const titles = [
+                "Passo 1: O Alerta",
+                "Passo 2: A Pressão",
+                "Passo 3: A Pausa",
+                "Passo 4: A Verificação",
+                "Passo 5: A Decisão Segura"
+            ];
+
+            function updateStepView() {
+                for (let i = 1; i <= totalSteps; i++) {
+                    document.getElementById(`passo-${i}`).classList.remove('active');
+                }
+                document.getElementById(`passo-${currentStep}`).classList.add('active');
+                stepTitle.textContent = titles[currentStep - 1];
+
+                prevButton.disabled = currentStep === 1;
+                nextButton.disabled = currentStep === totalSteps;
+            }
+
+            if (prevButton && nextButton) {
+                prevButton.addEventListener('click', () => {
+                    if (currentStep > 1) {
+                        currentStep--;
+                        updateStepView();
+                    }
+                });
+
+                nextButton.addEventListener('click', () => {
+                    if (currentStep < totalSteps) {
+                        currentStep++;
+                        updateStepView();
+                    }
+                });
+
+                updateStepView(); // Inicializa
+            } // Fim do if (prevButton && nextButton)
+
+            // Lógica da Análise de IA (Gemini)
+            const analyzeButton = document.getElementById('botao-analisar');
+            const messageInput = document.getElementById('campo-mensagem');
+            const loader = document.getElementById('carregador');
+            const analysisResult = document.getElementById('resultado-analise');
+            const resultTitle = document.getElementById('titulo-resultado');
+            const resultExplanation = document.getElementById('explicacao-resultado');
+
+            if (analyzeButton) {
+                analyzeButton.addEventListener('click', async () => {
+                    const message = messageInput.value;
+                    if (message.trim().length < 10) {
+                        alert("Por favor, insira uma mensagem um pouco mais longa para análise.");
+                        return;
+                    }
+
+                    // Prepara a UI para a chamada
+                    analysisResult.classList.add('hidden');
+                    loader.style.display = 'block';
+                    analyzeButton.disabled = true;
+
+                    // --- Chamada à API do Gemini ---
+                    // Este é o prompt do sistema que instrui a IA
+                    const systemPrompt = `
+                        Você é um especialista em segurança digital focado em fraudes no WhatsApp.
+                        Analise a mensagem do usuário e determine o nível de risco de ser um golpe (Baixo, Médio, Alto).
+                        Sua resposta deve ser em português do Brasil e dividida em duas partes:
+                        1.  **Título:** Apenas "Risco: [Nível]" (Ex: "Risco: Alto").
+                        2.  **Explicação:** Um parágrafo curto (máximo 3 frases) explicando o porquê, apontando os gatilhos mentais usados (ex: urgência, troca de número, pedido de PIX).
+                        
+                        Formate sua resposta exatamente assim:
+                        [Título]
+                        [Explicação]
+                    `;
+
+                    const userQuery = message;
+
+                    try {
+                        // URL da API (substitua 'gemini-2.5-flash-preview-09-2025' se necessário)
+                        const apiKey = ""; // Deixado em branco para o Canvas injetar
+                        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+                        const payload = {
+                            contents: [{ parts: [{ text: userQuery }] }],
+                            systemInstruction: {
+                                parts: [{ text: systemPrompt }]
+                            },
+                        };
+
+                        const response = await fetch(apiUrl, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(payload)
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`Erro na API: ${response.statusText}`);
+                        }
+
+                        const result = await response.json();
+                        const text = result.candidates[0].content.parts[0].text;
+
+                        // Processa a resposta da IA
+                        const parts = text.split('\n');
+                        const title = parts[0]; // Primeira linha é o Título
+                        const explanation = parts.slice(1).join(' '); // O resto é a explicação
+
+                        resultTitle.textContent = title;
+                        resultExplanation.textContent = explanation;
+
+                        // Ajusta a cor do título baseado no risco
+                        resultTitle.classList.remove('text-red-600', 'text-yellow-600', 'text-green-600');
+                        if (title.includes('Alto')) {
+                            resultTitle.classList.add('text-red-600');
+                        } else if (title.includes('Médio')) {
+                            resultTitle.classList.add('text-yellow-600');
+                        } else {
+                            resultTitle.classList.add('text-green-600');
+                        }
+
+                    } catch (error) {
+                        console.error("Erro ao chamar a API Gemini:", error);
+                        resultTitle.textContent = "Erro na Análise";
+                        resultExplanation.textContent = "Não foi possível conectar ao serviço de análise. Por favor, tente novamente mais tarde.";
+                        resultTitle.classList.add('text-red-600');
+                    } finally {
+                        // Restaura a UI
+                        loader.style.display = 'none';
+                        analysisResult.classList.remove('hidden');
+                        analyzeButton.disabled = false;
+                    }
+                });
+            } // Fim do if (analyzeButton)
+
+        }); // Fim do DOMContentLoaded
+    </script>
+
+</body>
+
+</html>
