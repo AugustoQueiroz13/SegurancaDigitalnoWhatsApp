@@ -8,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="config.js" defer></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -634,10 +635,15 @@
                     const userQuery = message;
 
                     try {
-                        // URL da API (substitua 'gemini-2.5-flash-preview-09-2025' se necessário)
-                        const apiKey = ""; // Deixado em branco para o Canvas injetar
+                        // **INÍCIO DA MODIFICAÇÃO DA API KEY**
+                        const apiKey = (typeof GEMINI_API_KEY !== 'undefined' && GEMINI_API_KEY !== "") ? GEMINI_API_KEY : "";
+                        // **FIM DA MODIFICAÇÃO DA API KEY**
+
                         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
+                        if (apiKey === "") {
+                            throw new Error("Chave de API não configurada. Verifique o arquivo config.js.");
+                        }
                         const payload = {
                             contents: [{ parts: [{ text: userQuery }] }],
                             systemInstruction: {
